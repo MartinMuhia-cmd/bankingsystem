@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#70152d">
+  <title>{% block title %}Harborline  Banking{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  {% if session.get('user_id') %}
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('dashboard') }}"><span class="brand-mark">H</span><span>WELLSFARGO <small> BANKING</small></span></a>
+    <div class="top-actions"><span class="demo-pill"> FUNDS</span><span class="welcome">{{ session.get('display_name', 'Customer') }}</span><form method="post" action="{{ url_for('logout') }}"><input type="hidden" name="_csrf_token" value="{{ csrf_token() }}"><button class="logout" type="submit">Sign out</button></form></div>
+  </header>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="nav-label">YOUR BANKING</div>
+      <a class="nav-link {{ 'active' if active == 'dashboard' else '' }}" href="{{ url_for('dashboard') }}"><span class="nav-icon">▦</span> Overview</a>
+      <a class="nav-link {{ 'active' if active == 'deposit' else '' }}" href="{{ url_for('deposit') }}"><span class="nav-icon">＋</span> Deposit funds</a>
+      <a class="nav-link {{ 'active' if active == 'withdraw' else '' }}" href="{{ url_for('withdraw') }}"><span class="nav-icon">↗</span> Withdraw funds</a>
+      <a class="nav-link {{ 'active' if active == 'transactions' else '' }}" href="{{ url_for('transactions') }}"><span class="nav-icon">≡</span> Transactions</a>
+      
+      <div class="sidebar-footer">SECURE  WORKSPACE<br><span>y</span></div>
+    </aside>
+    <main class="main-content">
+      <div class="mobile-label">BANKING</div>
+      {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}" role="status">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+      {% block content %}{% endblock %}
+      <footer class="page-footer">Harborline is a fictional banking interface. This application does not connect to any financial institution.</footer>
+    </main>
+  </div>
+  {% else %}
+    {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="login-flashes">{% for category, message in messages %}<div class="flash {{ category }}" role="status">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+    {% block public_content %}{% endblock %}
+  {% endif %}
+</body></html>
